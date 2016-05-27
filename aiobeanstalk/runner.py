@@ -153,7 +153,6 @@ class BeanstalkRunner(object):
         while True:
 
             try:
-                failures = 0
 
                 while True:
                     await self.semaphore.acquire()
@@ -168,6 +167,7 @@ class BeanstalkRunner(object):
                         # wrap the beanstalk call in a timeout of our own, catch any potential
                         # broken tcp connections, etc
                         job = await asyncio.wait_for(f, timeout=self.reserve_task_timeout)
+                        failures = 0
                     except:
                         self.semaphore.release()
                         raise
