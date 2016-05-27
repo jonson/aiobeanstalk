@@ -1,0 +1,12 @@
+beanstalk:
+  image: empiricalresults/beanstalkd:memory
+  ports:
+    - 11300
+
+test:
+  build: .
+  links:
+    - beanstalk
+  command: [python3, -m, unittest, discover]
+
+
