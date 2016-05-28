@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 PACKAGE_NAME = 'aiobeanstalk'
-PACKAGE_VERSION = '0.0.3'
+PACKAGE_VERSION = '0.0.4-dev'
 
 if __name__ == '__main__':
     setup(
