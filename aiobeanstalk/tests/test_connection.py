@@ -23,29 +23,47 @@ class TestBeanstalkConnection(TestCase):
         finally:
             self.conn = None
 
-    async def async_test_use(self):
-        using = await self.conn.using()
-        self.assertEqual("default", using)
-
-        await self.conn.use("sometube")
-        using = await self.conn.using()
-        self.assertEqual("sometube", using)
-
     def test_use(self):
-        self.loop.run_until_complete(self.async_test_use())
 
-    async def async_test_watch(self):
-        watching = await self.conn.watching()
-        self.assertEqual(["default"], watching)
+        async def test():
+            using = await self.conn.using()
+            self.assertEqual("default", using)
 
-        tube = str(uuid.uuid4())
-        count = await self.conn.watch(tube)
-        self.assertEqual(2, count)
+            await self.conn.use("sometube")
+            using = await self.conn.using()
+            self.assertEqual("sometube", using)
 
-        watching = await self.conn.watching()
-        self.assertEqual(["default", tube], watching)
+        self.loop.run_until_complete(test())
 
     def test_watch(self):
-        self.loop.run_until_complete(self.async_test_watch())
 
+        async def test():
+            watching = await self.conn.watching()
+            self.assertEqual(["default"], watching)
 
+            tube = str(uuid.uuid4())
+            count = await self.conn.watch(tube)
+            self.assertEqual(2, count)
+
+            watching = await self.conn.watching()
+            self.assertEqual(["default", tube], watching)
+
+        self.loop.run_until_complete(test())
+
+    def test_tubes(self):
+
+        async def test():
+            tubes = await self.conn.tubes()
+            self.assertEqual(["default"], tubes)
+
+        self.loop.run_until_complete(test())
+
+    def test_stats_tube(self):
+
+        async def test():
+            stats = await self.conn.stats_tube("default")
+
+            # just a quick sanity check
+            self.assertEqual('default', stats['name'])
+
+        self.loop.run_until_complete(test())

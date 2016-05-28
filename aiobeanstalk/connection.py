@@ -318,6 +318,10 @@ class BeanstalkConnection(object):
         """Return a dict of beanstalkd statistics."""
         return self.execute('stats', ['OK'], response_type='yaml')
 
+    def stats_tube(self, name):
+        """Return a dict of stats about a given tube."""
+        return self.execute('stats-tube {}'.format(name), ['OK'], ['NOT_FOUND'], response_type='yaml')
+
     def use(self, name):
         """Use a given tube."""
         return self.execute('use {}'.format(name), ['USING'])
@@ -407,4 +411,10 @@ class BeanstalkConnection(object):
 
         f.add_done_callback(wrapper)
         return f2
+
+    def tubes(self):
+        """Return a list of all existing tubes."""
+        return self.execute('list-tubes', ['OK'], response_type='yaml')
+
+
 
